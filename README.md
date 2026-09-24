@@ -14,11 +14,8 @@ OSPAR. 2023. OSPAR Quality status report 2023.
 
 Probst, W. N., Lynam, C. P., Bluemel, J. K., and Clarke, M. 2023. Assessing change in the occurrence of rare species using the binomial distribution. Ecological Indicators, 156.
 
-# Get started
+# To get started
 
-# Load packages ----
-library(magrittr);library(reshape);library(tidyverse);library(data.table)
-library(sf);library(raster);library(terra)
-library(ggplot2);library(patchwork);library(ggpubr);library(pals);library(crayon)
-library(worrms)     
-library(mapplots)
+'''' R
+require(ggplot2)
+''''
