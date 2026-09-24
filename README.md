@@ -17,5 +17,5 @@ Probst, W. N., Lynam, C. P., Bluemel, J. K., and Clarke, M. 2023. Assessing chan
 # To get started
 
 '''' R
-require(ggplot2)
+//require(ggplot2)
 ''''
