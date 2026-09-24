@@ -1,18 +1,52 @@
-# FC1-Update routines 2026
-# Authors: W.N. Probst, 
+---
+title: "An introduction to calculating FC-1"
+author: "W.Nikolaus Prost"
+date: "2026-09-24"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 
-# Load packages ----
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## Update of the OSPAR FC-1
+
+This is a collection of functions to calculate the occurrence of sensitive fish species indicator by OSPAR based on the OSPAR Quality Status Report 2023. The code is based on the idea of assessing the frequency of species' occurrences of in survey hauls as suggested by Probst et al. (2023). This code is prepared for the OSPAR Intermediate Assessment 2027. New features include:
+
+- Besides the binomial integration as described by Probst et al. (2023), the implementation of a new integration method for combining assessment outcomes from multiple surveys based on an average probability of an assessment outcome weighted by the proportion of hauls included.
+- The possibility to perform assessments by region (OSPAR regions I-V) or separately by countries within an OSPAR region.
+- A function for conducting assessments across multiple assessment periods.
+
+
+## References
+
+Lynam, C. P., Bluemel, J. K., and Probst, W. N. 2022. Recovery of Sensitive Fish Species. In: The 2023 Quality Status Report for the Northeast Atlantic, 19 pp. OSPAR Commission, London.
+
+OSPAR. 2023. OSPAR Quality status report 2023.
+
+Probst, W. N., Lynam, C. P., Bluemel, J. K., and Clarke, M. 2023. Assessing change in the occurrence of rare species using the binomial distribution. Ecological Indicators, 156.
+
+
+## To get started
+
+Install the folders 'scripts' and 'spatial data' onto your local computer. You also might need to install obus and dependent packages (e.g. 'DuckDB'):
+
+remotes::install_github("einarhjorleifsson/obus@2a6c1f64ce0fda8c0167888488ae129b29e1e0f6")
+
+For info see ices-tools-prod/icesDatras#32
+
+Then you should be able to use the functions from the folder 'scripts'
+
+```{r}
+# Load some packages
 library(magrittr);library(reshape);library(tidyverse);library(data.table)
 library(sf);library(raster);library(terra)
 library(ggplot2);library(patchwork);library(ggpubr);library(pals);library(crayon)
 library(worrms)     
 library(mapplots)
-
-# remotes::install_github("einarhjorleifsson/obus@2a6c1f64ce0fda8c0167888488ae129b29e1e0f6")
-# Source of package 'obus' to extract DATRAS data
-# https://github.com/ices-tools-prod/icesDatras/issues/32
-# To install:
-# remotes::install_github("einarhjorleifsson/obus@2a6c1f64ce0fda8c0167888488ae129b29e1e0f6")
 library(obus)
 
 # Source functions ----
@@ -39,7 +73,7 @@ ovrvw.hh.iii<-ovrvw.hh(hh.iii.dat)
 
 ovrvw.hh.iii$n.hauls %>% 
   as.data.frame %>%
-  mutate(year=Var1 %>% as.character %>% as.numeric) %>% 
+  mutate(year=Var1 %>% as.character %>% as.numeric)
   ggplot(aes(x=year,y=Freq,fill=Var2))+
   geom_col(show.legend=F)+
   facet_wrap(.~Var2,scales="free_y")+
@@ -101,12 +135,4 @@ tra.iii.per<-period.asmnt(boa.dat=tra.iii,
                           asp=list(2004:2009,2010:2015,2016:2021,2022:2025))
 tra.iii.per$summary.plot
 
-
-
-
-
-
-
-
-
-
+```
