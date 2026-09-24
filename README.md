@@ -63,7 +63,10 @@ ovrvw.hh.iii$n.hauls %>%
   facet_wrap(.~Var2,scales="free_y")+
   scale_fill_discrete(palette=pals::tol.rainbow)+
   labs(x="Year",y="Number of hauls")
+```
+<img width="867" height="706" alt="grafik" src="https://github.com/user-attachments/assets/9cfc62b4-b802-4a5b-b3d9-378cd80024b1" />
 
+```
 x11(15,15)
 ovrvw.hh.iii$spatial.overview
 
