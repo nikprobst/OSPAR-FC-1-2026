@@ -8,6 +8,8 @@ New features include:
 - A function for conducting assessments accross multiple assessment periods.
 
 # References
- Lynam, C. P., Bluemel, J. K., and Probst, W. N. 2022. Recovery of Sensitive Fish Species. In: The 2023 Quality Status Report for the Northeast Atlantic, 19 pp. OSPAR Commission, London.
+Lynam, C. P., Bluemel, J. K., and Probst, W. N. 2022. Recovery of Sensitive Fish Species. In: The 2023 Quality Status Report for the Northeast Atlantic, 19 pp. OSPAR Commission, London.
+ 
 OSPAR. 2023. OSPAR Quality status report 2023.
+
 Probst, W. N., Lynam, C. P., Bluemel, J. K., and Clarke, M. 2023. Assessing change in the occurrence of rare species using the binomial distribution. Ecological Indicators, 156.
