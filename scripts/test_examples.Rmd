@@ -7,8 +7,8 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup,include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message=F,warning=FALSE)
 
 ```
 
@@ -40,7 +40,7 @@ For info see ices-tools-prod/icesDatras#32
 
 Then you should be able to use the functions from the folder 'scripts'
 
-```{r}
+```{r,echo=T,results='hide'}
 # Load some packages
 library(magrittr);library(reshape);library(tidyverse);library(data.table)
 library(sf);library(raster);library(terra)
@@ -50,17 +50,20 @@ library(mapplots)
 library(obus)
 
 # Source functions ----
-source("./scripts/datras.hh.R")
-source("./scripts/datras.merge.hhhl.R")
-source("./scripts/boa.wrk.hrs.R")
-source("./scripts/boa.asmnt.R")
-source("./scripts/period.asmnt.R")
-source("./scripts/boa.spatial.R")
-source("./scripts/ovrvw.spc.R")
-source("./scripts/ovrvw.hh.R")
+source("datras.hh.R")
+source("datras.merge.hhhl.R")
+source("boa.wrk.hrs.R")
+source("boa.asmnt.R")
+source("period.asmnt.R")
+source("boa.spatial.R")
+source("ovrvw.spc.R")
+source("ovrvw.hh.R")
+
+# Load EEZ & OSPAR data
+eezs.15<-read_sf("../spatial data/eezs.ospar.regions.shp")
+ospar.regs<-read_sf("../spatial data/ospar_regions_simplified.shp")
 
 # Examples of command chain ----
-
 # Get all hauls from all surveys in OSPAR region III
 # Need to do this once per region, than can be merged separately for each species
 hh.iii.dat<-datras.hh(ospar.region="III",
@@ -70,19 +73,24 @@ hh.iii.dat<-datras.hh(ospar.region="III",
 
 # Explore number of hauls and spatial extent
 ovrvw.hh.iii<-ovrvw.hh(hh.iii.dat)
-
+```
+Plot annual number of hauls per survey
+```{r}
 ovrvw.hh.iii$n.hauls %>% 
   as.data.frame %>%
-  mutate(year=Var1 %>% as.character %>% as.numeric)
+  mutate(year=Var1 %>% as.character %>% as.numeric) %>%
   ggplot(aes(x=year,y=Freq,fill=Var2))+
   geom_col(show.legend=F)+
   facet_wrap(.~Var2,scales="free_y")+
   scale_fill_discrete(palette=pals::tol.rainbow)+
   labs(x="Year",y="Number of hauls")
 
-x11(15,15)
+```
+Plot spatial coverage of hauls per year
+```{r}
 ovrvw.hh.iii$spatial.overview
-
+```
+```{r, echo=T}
 # Merge with abundance/occurrence data for cod
 cod.iii<-datras.merge.hhhl(hh.iii.dat,"Gadus morhua")
 sqa.iii<-datras.merge.hhhl(hh.iii.dat,"Squalus acanthias")
@@ -93,6 +101,8 @@ cod.iii.nat<-boa.asmnt(boa.dat=cod.iii,
                        rp=1985:2015,
                        ap=2022:2025,
                        rgnl=F)
+cod.iii.nat
+```
 
 # Spurdog 
 sqa.iii.nat<-boa.asmnt(boa.dat=sqa.iii,

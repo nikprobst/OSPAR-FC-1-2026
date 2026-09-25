@@ -37,6 +37,7 @@ hh.iii.dat<-datras.hh(ospar.region="III",
 # Explore number of hauls and spatial extent
 ovrvw.hh.iii<-ovrvw.hh(hh.iii.dat)
 
+# Number of hauls per year & survey
 ovrvw.hh.iii$n.hauls %>% 
   as.data.frame %>%
   mutate(year=Var1 %>% as.character %>% as.numeric) %>% 
@@ -46,6 +47,7 @@ ovrvw.hh.iii$n.hauls %>%
   scale_fill_discrete(palette=pals::tol.rainbow)+
   labs(x="Year",y="Number of hauls")
 
+# Spatial extent
 x11(15,15)
 ovrvw.hh.iii$spatial.overview
 

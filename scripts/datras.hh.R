@@ -13,8 +13,8 @@ datras.hh<-function(ospar.region,srvys,yrs){
   require(crayon)
   
   # Load EEZ & OSPAR data
-  eezs.15<-read_sf("./spatial data/eezs.ospar.regions.shp")
-  ospar.regs<-read_sf("./spatial data/ospar_regions_simplified.shp")
+  eezs.15<-read_sf("../spatial data/eezs.ospar.regions.shp")
+  ospar.regs<-read_sf("../spatial data/ospar_regions_simplified.shp")
   
   # Get haul information, e.g. lon, lat, tow duration, etc. from ICES DATRAS#
   # via Duck DB (very fast and by species)
@@ -53,7 +53,7 @@ datras.hh<-function(ospar.region,srvys,yrs){
   # Correct and give out final table
   hh.sf.i<-hh.sf.i[,c(".id","Year","Quarter","Survey","Gear","Region","Country.1","StatisticalRectangle",
                       "HaulDuration","ShootLongitude","ShootLatitude")]
-  names(hh.sf.i)[c(7)]<-c("Country")
+  names(hh.sf.i)[c(7,10,11)]<-c("Country","lon","lat")
   hh.sf.i
   
 }

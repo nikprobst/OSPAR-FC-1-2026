@@ -29,22 +29,22 @@ datras.merge.hhhl<-function(hh.dat,spc){
   # Merge haul and abundance information
   spc.dat<-base::merge(
     hh.dat[,c(".id","Year","Quarter","Survey","Gear","Region","Country","StatisticalRectangle",
-              "HaulDuration","ShootLongitude","ShootLatitude")],
+              "HaulDuration","lon","lat")],
     hl[,c(".id","latin","LengthClass","NumberAtLength")],
     by=".id",
     all.x=T) %>%
     group_by(.id,Year,Quarter,Survey,Gear,Region,Country,StatisticalRectangle,HaulDuration,
-             ShootLongitude,ShootLatitude,latin) %>%
+            lon,lat,latin) %>%
     reframe(total.n=sum(NumberAtLength,na.rm=T)) 
   
   # Correct some missing data
   spc.dat$latin<-ifelse(spc.dat$latin %>% is.na,spc,spc.dat$latin)
-  spc.dat$ShootLongitude<-ifelse(spc.dat$ShootLongitude %>% is.na,
+  spc.dat$lon<-ifelse(spc.dat$lon %>% is.na,
                                  ices.rect(spc.dat$StatisticalRectangle)[,1],
-                                 spc.dat$ShootLongitude)
-  spc.dat$ShootLatitude<-ifelse(spc.dat$ShootLatitude %>% is.na,
+                                 spc.dat$lon)
+  spc.dat$lat<-ifelse(spc.dat$lat %>% is.na,
                                 ices.rect(spc.dat$StatisticalRectangle)[,2],
-                                spc.dat$ShootLatitude)
+                                spc.dat$lat)
   spc.dat$occ<-ifelse(spc.dat$total.n>0,1,0)
   
   # Rename columns
@@ -52,6 +52,5 @@ datras.merge.hhhl<-function(hh.dat,spc){
                     "ices.rect","hauldur","lon","lat","species","total.n","occ")
   
   # Final arrangement
-  #spc.dat<-spc.dat[,c(1:6,13:14,8:9,7,10:12)]
   spc.dat
 }
