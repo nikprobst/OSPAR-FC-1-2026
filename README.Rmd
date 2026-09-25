@@ -72,7 +72,6 @@ hh.iii.dat<-read_sf("./test data/hh.iii.dat.shp")
 ovrvw.hh.iii<-ovrvw.hh(hh.iii.dat)
 
 # Plot annual number of hauls per survey
-
 ovrvw.hh.iii$n.hauls %>% 
   as.data.frame %>%
   mutate(year=Var1 %>% as.character %>% as.numeric) %>%
@@ -88,15 +87,16 @@ ovrvw.hh.iii$spatial.overview
 ```
 ```{r, echo=T}
 # Merge with abundance/occurrence data for cod
-cod.iii<-datras.merge.hhhl(hh.iii.dat,"Gadus morhua")
+cod.iii<-read.csv("./test data/cod.iii.csv",header=T)
 cod.iii[1:3,]
 
-# Assess binomial occurrence (BOA) for cod for all countries
+# Assess binomial occurrence (BOA) for cod for all countries in OSPAR Region III
 cod.iii.nat<-boa.asmnt(boa.dat=cod.iii,
                        rp=1985:2015,
                        ap=2022:2025,
                        rgnl=F)
-cod.iii.nat
+
+cod.iii.nat$integrated.prob.score
 
 # BOA assessment for cod for entire region III
 cod.iii.reg<-boa.asmnt(boa.dat=cod.iii,
@@ -105,27 +105,19 @@ cod.iii.reg<-boa.asmnt(boa.dat=cod.iii,
                        rgnl=T)
 
 # Get an overview on data coverage for cod
-ovw.iii<-ovrvw.spc(cod.iii)
-ovw.iii$n.hauls
-ovw.iii$occ.freq.plot
-cod.iii
-ovw.iii$spatial.overview
-
+ovw.cod.iii<-ovrvw.spc(cod.iii)
+ovw.cod.iii$n.hauls
+ovw.cod.iii$occ.freq.plot
+ovw.cod.iii$spatial.overview
+```
+```{r,echo=T,message=F}
 # Spatial plots
 boa.spatial(cod.iii.nat,"bi")
-boa.spatial(sqa.iii.nat,"ps")
-boa.spatial(tra.iii.reg,"both")
 
-# Assess across multiple periods
+# Assess cod in Region III across multiple periods
 cod.iii.per<-period.asmnt(boa.dat=cod.iii,
                          rp=1985:2003,
                          asp=list(2004:2009,2010:2015,2016:2021,2022:2025))
 
 cod.iii.per$summary.plot
-
-tra.iii.per<-period.asmnt(boa.dat=tra.iii,
-                          rp=1985:2003,
-                          asp=list(2004:2009,2010:2015,2016:2021,2022:2025))
-tra.iii.per$summary.plot
-
 ```

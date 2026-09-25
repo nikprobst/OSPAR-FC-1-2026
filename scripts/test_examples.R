@@ -57,6 +57,8 @@ cod.iii<-datras.merge.hhhl(hh.iii.dat,"Gadus morhua")
 sqa.iii<-datras.merge.hhhl(hh.iii.dat,"Squalus acanthias")
 tra.iii<-datras.merge.hhhl(hh.iii.dat,"Trachurus trachurus")
 
+write.csv(cod.iii,"./test data/cod.iii.csv",row.names=F)
+
 # Assess binomial occurrence (BOA) for cod for all countries
 cod.iii.nat<-boa.asmnt(boa.dat=cod.iii,
                        rp=1985:2015,
@@ -81,7 +83,7 @@ cod.iii.reg<-boa.asmnt(boa.dat=cod.iii,
                        ap=2016:2021,
                        rgnl=T)
 
-# Get an overview on data coverage for spurdog
+# Get an overview on data coverage for cod
 ovw.iii<-ovrvw.spc(cod.iii)
 ovw.iii$n.hauls
 ovw.iii$occ.freq.plot
