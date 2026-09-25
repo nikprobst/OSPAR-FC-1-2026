@@ -33,6 +33,7 @@ hh.iii.dat<-datras.hh(ospar.region="III",
                       srvys=c("BTS","EVHOE","FR-WCGFS","IE-IAMS","IE-IGFS",
                         "NIGFS","SCOWCGFS","SP-PORC","SWC-IBTS"),
                       yrs=1985:2026)
+write_sf(hh.iii.dat,"./test data/hh.iii.dat.shp")
 
 # Explore number of hauls and spatial extent
 ovrvw.hh.iii<-ovrvw.hh(hh.iii.dat)
@@ -97,6 +98,7 @@ cod.iii.per<-period.asmnt(boa.dat=cod.iii,
                          asp=list(2004:2009,2010:2015,2016:2021,2022:2025))
 
 cod.iii.per$summary.plot
+cod.iii.per$binomial.int.asmnts
 
 tra.iii.per<-period.asmnt(boa.dat=tra.iii,
                           rp=1985:2003,

@@ -73,7 +73,7 @@ period.asmnt<-function(boa.dat,rp,asp) {
   asr.reg<-data.frame(
     species=boa.dat$species[1],
     region=boa.dat$ospar.region[1],
-    country="Entire region",
+    country=paste("OSPAR region",boa.dat$ospar.region[1]),
     ref.period=bi.res.reg$ref.per,
     asmnt.period=bi.res.reg$asmnt.per,
     asmnt.res.ps=asr.ps.reg,
