@@ -50,29 +50,32 @@ library(mapplots)
 library(obus)
 
 # Source functions ----
-source("./scripts/datras.hh.R")
-source("./scripts/datras.merge.hhhl.R")
-source("./scripts/boa.wrk.hrs.R")
-source("./scripts/boa.asmnt.R")
-source("./scripts/period.asmnt.R")
-source("./scripts/boa.spatial.R")
-source("./scripts/ovrvw.spc.R")
-source("./scripts/ovrvw.hh.R")
+source("datras.hh.R")
+source("datras.merge.hhhl.R")
+source("boa.wrk.hrs.R")
+source("boa.asmnt.R")
+source("period.asmnt.R")
+source("boa.spatial.R")
+source("ovrvw.spc.R")
+source("ovrvw.hh.R")
 
 # Load EEZ & OSPAR data
-eezs.15<-read_sf("./spatial data/eezs.ospar.regions.shp")
-ospar.regs<-read_sf("./spatial data/ospar_regions_simplified.shp")
+eezs.15<-read_sf("../spatial data/eezs.ospar.regions.shp")
+ospar.regs<-read_sf("../spatial data/ospar_regions_simplified.shp")
 
 # Examples of command chain ----
 # Get all hauls from all surveys in OSPAR region III
 # Need to do this once per region, than can be merged separately for each species
-hh.iii.dat<-read_sf("./test data/hh.iii.dat.shp")
+hh.iii.dat<-datras.hh(ospar.region="III",
+                      srvys=c("BTS","EVHOE","FR-WCGFS","IE-IAMS","IE-IGFS",
+                        "NIGFS","SCOWCGFS","SP-PORC","SWC-IBTS"),
+                      yrs=1985:2026)
 
 # Explore number of hauls and spatial extent
 ovrvw.hh.iii<-ovrvw.hh(hh.iii.dat)
-
-# Plot annual number of hauls per survey
-
+```
+Plot annual number of hauls per survey
+```{r}
 ovrvw.hh.iii$n.hauls %>% 
   as.data.frame %>%
   mutate(year=Var1 %>% as.character %>% as.numeric) %>%
@@ -82,14 +85,16 @@ ovrvw.hh.iii$n.hauls %>%
   scale_fill_discrete(palette=pals::tol.rainbow)+
   labs(x="Year",y="Number of hauls")
 
-
-# Plot spatial coverage of hauls per year
+```
+Plot spatial coverage of hauls per year
+```{r}
 ovrvw.hh.iii$spatial.overview
 ```
 ```{r, echo=T}
 # Merge with abundance/occurrence data for cod
 cod.iii<-datras.merge.hhhl(hh.iii.dat,"Gadus morhua")
-cod.iii[1:3,]
+sqa.iii<-datras.merge.hhhl(hh.iii.dat,"Squalus acanthias")
+tra.iii<-datras.merge.hhhl(hh.iii.dat,"Trachurus trachurus")
 
 # Assess binomial occurrence (BOA) for cod for all countries
 cod.iii.nat<-boa.asmnt(boa.dat=cod.iii,
@@ -97,6 +102,19 @@ cod.iii.nat<-boa.asmnt(boa.dat=cod.iii,
                        ap=2022:2025,
                        rgnl=F)
 cod.iii.nat
+```
+
+# Spurdog 
+sqa.iii.nat<-boa.asmnt(boa.dat=sqa.iii,
+                       rp=1985:2003,
+                       ap=2022:2025,
+                       rgnl=F)
+
+# Horse mackerel
+tra.iii.reg<-boa.asmnt(boa.dat=tra.iii,
+                       rp=1985:2003,
+                       ap=2022:2025,
+                       rgnl=T)
 
 # BOA assessment for cod for entire region III
 cod.iii.reg<-boa.asmnt(boa.dat=cod.iii,
@@ -104,11 +122,10 @@ cod.iii.reg<-boa.asmnt(boa.dat=cod.iii,
                        ap=2016:2021,
                        rgnl=T)
 
-# Get an overview on data coverage for cod
+# Get an overview on data coverage for spurdog
 ovw.iii<-ovrvw.spc(cod.iii)
 ovw.iii$n.hauls
 ovw.iii$occ.freq.plot
-cod.iii
 ovw.iii$spatial.overview
 
 # Spatial plots
