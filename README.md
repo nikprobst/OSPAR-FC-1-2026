@@ -1,31 +1,47 @@
-# Update of the OSPAR FC-1
-This is a collection of functions to calculate the occurrence of sensitive fish species indicator by OSPAR based on the OSPAR Quality Status Report 2023. The code is based on the idea of assessing the frequency of species' occurrences of in survey hauls as suggested by Probst et al. (2023).
-This code is prepared for the OSPAR Intermediate Assessment 2027.
-New features include:
+---
+title: "An introduction to calculating FC-1"
+author: "W.Nikolaus Prost"
+date: "2026-09-24"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 
-- Besides the binomial integration as described  by Probst et al. (2023), the implementation of a new integration method for combining assessment outcomesfrom multiple surveys based on an average probability of an assessment outcome weighted by the proportion of hauls included.
-- The possibility to perform assessments by region (OSPAR regions I-V) or seperately by countries within an OSPAR region.
-- A function for conducting assessments accross multiple assessment periods.
+```{r setup,include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message=F,warning=FALSE)
 
-# References
+```
+
+## Update of the OSPAR FC-1
+
+This is a collection of functions to calculate the occurrence of sensitive fish species indicator by OSPAR based on the OSPAR Quality Status Report 2023. The code is based on the idea of assessing the frequency of species' occurrences of in survey hauls as suggested by Probst et al. (2023). This code is prepared for the OSPAR Intermediate Assessment 2027. New features include:
+
+- Besides the binomial integration as described by Probst et al. (2023), the implementation of a new integration method for combining assessment outcomes from multiple surveys based on an average probability of an assessment outcome weighted by the proportion of hauls included.
+- The possibility to perform assessments by region (OSPAR regions I-V) or separately by countries within an OSPAR region.
+- A function for conducting assessments across multiple assessment periods.
+
+
+## References
+
 Lynam, C. P., Bluemel, J. K., and Probst, W. N. 2022. Recovery of Sensitive Fish Species. In: The 2023 Quality Status Report for the Northeast Atlantic, 19 pp. OSPAR Commission, London.
- 
+
 OSPAR. 2023. OSPAR Quality status report 2023.
 
 Probst, W. N., Lynam, C. P., Bluemel, J. K., and Clarke, M. 2023. Assessing change in the occurrence of rare species using the binomial distribution. Ecological Indicators, 156.
 
-# To get started
+
+## To get started
+
 Install the folders 'scripts' and 'spatial data' onto your local computer. You also might need to install obus and dependent packages (e.g. 'DuckDB'):
 
-
-```
 remotes::install_github("einarhjorleifsson/obus@2a6c1f64ce0fda8c0167888488ae129b29e1e0f6")
-```
-For info see https://github.com/ices-tools-prod/icesDatras/issues/32
 
-Then you should be abble to use the functions from the folder 'scripts'
-``` <R>
-# Load packages ----
+For info see ices-tools-prod/icesDatras#32
+
+Then you should be able to use the functions from the folder 'scripts'
+
+```{r,echo=T,results='hide'}
+# Load some packages
 library(magrittr);library(reshape);library(tidyverse);library(data.table)
 library(sf);library(raster);library(terra)
 library(ggplot2);library(patchwork);library(ggpubr);library(pals);library(crayon)
@@ -34,17 +50,20 @@ library(mapplots)
 library(obus)
 
 # Source functions ----
-source("./scripts/datras.hh.R")
-source("./scripts/datras.merge.hhhl.R")
-source("./scripts/boa.wrk.hrs.R")
-source("./scripts/boa.asmnt.R")
-source("./scripts/period.asmnt.R")
-source("./scripts/boa.spatial.R")
-source("./scripts/ovrvw.spc.R")
-source("./scripts/ovrvw.hh.R")
+source("datras.hh.R")
+source("datras.merge.hhhl.R")
+source("boa.wrk.hrs.R")
+source("boa.asmnt.R")
+source("period.asmnt.R")
+source("boa.spatial.R")
+source("ovrvw.spc.R")
+source("ovrvw.hh.R")
+
+# Load EEZ & OSPAR data
+eezs.15<-read_sf("../spatial data/eezs.ospar.regions.shp")
+ospar.regs<-read_sf("../spatial data/ospar_regions_simplified.shp")
 
 # Examples of command chain ----
-
 # Get all hauls from all surveys in OSPAR region III
 # Need to do this once per region, than can be merged separately for each species
 hh.iii.dat<-datras.hh(ospar.region="III",
@@ -54,22 +73,24 @@ hh.iii.dat<-datras.hh(ospar.region="III",
 
 # Explore number of hauls and spatial extent
 ovrvw.hh.iii<-ovrvw.hh(hh.iii.dat)
-
+```
+Plot annual number of hauls per survey
+```{r}
 ovrvw.hh.iii$n.hauls %>% 
   as.data.frame %>%
-  #data.table::melt(id.vars="Year") %>% 
-  ggplot(aes(x=Var1,y=Freq,fill=Var2))+
+  mutate(year=Var1 %>% as.character %>% as.numeric) %>%
+  ggplot(aes(x=year,y=Freq,fill=Var2))+
   geom_col(show.legend=F)+
   facet_wrap(.~Var2,scales="free_y")+
   scale_fill_discrete(palette=pals::tol.rainbow)+
   labs(x="Year",y="Number of hauls")
-```
-<img width="867" height="706" alt="grafik" src="https://github.com/user-attachments/assets/9cfc62b4-b802-4a5b-b3d9-378cd80024b1" />
 
 ```
-x11(15,15)
+Plot spatial coverage of hauls per year
+```{r}
 ovrvw.hh.iii$spatial.overview
-
+```
+```{r, echo=T}
 # Merge with abundance/occurrence data for cod
 cod.iii<-datras.merge.hhhl(hh.iii.dat,"Gadus morhua")
 sqa.iii<-datras.merge.hhhl(hh.iii.dat,"Squalus acanthias")
@@ -80,6 +101,8 @@ cod.iii.nat<-boa.asmnt(boa.dat=cod.iii,
                        rp=1985:2015,
                        ap=2022:2025,
                        rgnl=F)
+cod.iii.nat
+```
 
 # Spurdog 
 sqa.iii.nat<-boa.asmnt(boa.dat=sqa.iii,
