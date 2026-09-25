@@ -24,7 +24,6 @@ hh.all.sf<-hh.all[-hh.all.idx,] %>% st_as_sf(coords=c("ShootLongitude","ShootLat
 hh.all.sf$lon<-st_coordinates(hh.all.sf)[,1]
 hh.all.sf$lat<-st_coordinates(hh.all.sf)[,2]
 
-
 # Intersect haul data with OSPAR-regions
 hh.all.i<-st_intersection(hh.all.sf,subset(ospar.regs,Region=="I"))
 hh.all.ii<-st_intersection(hh.all.sf,subset(ospar.regs,Region=="II"))
@@ -51,7 +50,9 @@ ggplot()+geom_sf(data=hh.all.i,aes(col=Survey))
 ggplot()+geom_sf(data=hh.all.ii,aes(col=Survey))
 ggplot()+geom_sf(data=hh.all.iii,aes(col=Survey))
 ggplot()+geom_sf(data=hh.all.iv,aes(col=Survey))
-ggplot()+geom_sf(data=hh.all.v,aes(col=Survey))
+ggplot()+geom_sf(data=hh.all.v,aes(col=Survey))+
+  annotation_map(map_data("world"))+
+  coord_quickmap()
 
 ## Survey list per region ----
 srvys.i<-hh.all.i$Survey %>% unique
@@ -111,3 +112,25 @@ spcs.v<-data.table::rbindlist(wm_record_((hl.all.v$ValidAphiaID %>% unique %>% s
 spcs.v<-spcs.v[strsplit(spcs.v$scientificname," ") %>% lapply(length) %>% is_greater_than(1) %>% which,] %>%
   subset(class %in% c("Teleostei","Elasmobranchii","Cephalopoda"))
 spcs.v<-spcs.v[spcs.v$scientificname %>% order,]
+
+# Save lists ----
+# survey lists
+write.csv(srvys.i,"./lists/surveys_by_region/srvys.i",row.names=F)
+write.csv(srvys.ii,"./lists/surveys_by_region/srvys.ii",row.names=F)
+write.csv(srvys.iii,"./lists/surveys_by_region/srvys.iii",row.names=F)
+write.csv(srvys.iv,"./lists/surveys_by_region/srvys.iv",row.names=F)
+write.csv(srvys.v,"./lists/surveys_by_region/srvys.v",row.names=F)
+
+# Years
+write.csv(yrs.i,"./lists/years_by_region/yrs.i",row.names=F)
+write.csv(yrs.ii,"./lists/years_by_region/yrs.ii",row.names=F)
+write.csv(yrs.iii,"./lists/years_by_region/yrs.iii",row.names=F)
+write.csv(yrs.iv,"./lists/years_by_region/yrs.iv",row.names=F)
+write.csv(yrs.v,"./lists/years_by_region/yrs.v",row.names=F)
+
+# Species lists
+write.csv(spcs.i,"./lists/species_by_region/spcs.i.csv",row.names=F)
+write.csv(spcs.ii,"./lists/species_by_region/spcs.ii.csv",row.names=F)
+write.csv(spcs.iii,"./lists/species_by_region/spcs.iii.csv",row.names=F)
+write.csv(spcs.iv,"./lists/species_by_region/spcs.iv.csv",row.names=F)
+write.csv(spcs.v,"./lists/species_by_region/spcs.v.csv",row.names=F)
