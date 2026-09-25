@@ -2,7 +2,7 @@
 title: "An introduction to calculating FC-1"
 author: "W.Nikolaus Prost"
 date: "2026-09-24"
-output: html_document
+output: github_document
 editor_options: 
   chunk_output_type: console
 ---
