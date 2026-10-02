@@ -32,13 +32,16 @@ Probst, W. N., Lynam, C. P., Bluemel, J. K., and Clarke, M. 2023. Assessing chan
 
 ## To get started
 
-Install the folders 'scripts' and 'spatial data' onto your local computer. You also might need to install obus and dependent packages (e.g. 'DuckDB'):
+Install the folders 'scripts' and 'spatial data' onto your local computer. You also might need to install 'obus' and dependent packages (e.g. 'DuckDB'):
 
 remotes::install_github("einarhjorleifsson/obus@2a6c1f64ce0fda8c0167888488ae129b29e1e0f6")
 
-For info see ices-tools-prod/icesDatras#32
+and 
 
-Then you should be able to use the functions from the folder 'scripts'
+https://github.com/einarhjorleifsson/obus
+https://github.com/ices-tools-prod/icesDatras/issues/32
+
+After the installation of 'obus' you should be able to use the functions from the folder 'scripts'.
 
 ```{r,echo=T,results='hide'}
 # Load some packages
@@ -70,7 +73,8 @@ hh.iii.dat<-read_sf("./test data/hh.iii.dat.shp")
 
 # Explore number of hauls and spatial extent
 ovrvw.hh.iii<-ovrvw.hh(hh.iii.dat)
-
+```
+```{r, echo=T,fig.height=6,fig.width=8}
 # Plot annual number of hauls per survey
 ovrvw.hh.iii$n.hauls %>% 
   as.data.frame %>%
@@ -83,6 +87,8 @@ ovrvw.hh.iii$n.hauls %>%
 
 
 # Plot spatial coverage of hauls per year
+```
+```{r, echo=T,fig.height=8,fig.width=10}
 ovrvw.hh.iii$spatial.overview
 ```
 ```{r, echo=T}
@@ -108,12 +114,15 @@ cod.iii.reg<-boa.asmnt(boa.dat=cod.iii,
 ovw.cod.iii<-ovrvw.spc(cod.iii)
 ovw.cod.iii$n.hauls
 ovw.cod.iii$occ.freq.plot
+```
+```{r,echo=T,message=F,fig.height=8,fig.width=10}
 ovw.cod.iii$spatial.overview
 ```
-```{r,echo=T,message=F}
+```{r,echo=T,message=F,fig.height=4,fig.width=4}
 # Spatial plots
 boa.spatial(cod.iii.nat,"bi")
-
+```
+```{r,echo=F,message=F,fig.height=4,fig.width=8}
 # Assess cod in Region III across multiple periods
 cod.iii.per<-period.asmnt(boa.dat=cod.iii,
                          rp=1985:2003,

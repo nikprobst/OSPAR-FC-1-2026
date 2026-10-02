@@ -37,14 +37,18 @@ distribution. Ecological Indicators, 156.
 ## To get started
 
 Install the folders ‘scripts’ and ‘spatial data’ onto your local
-computer. You also might need to install obus and dependent packages
+computer. You also might need to install ‘obus’ and dependent packages
 (e.g. ‘DuckDB’):
 
 remotes::install_github(“<einarhjorleifsson/obus@2a6c1f64ce0fda8c0167888488ae129b29e1e0f6>”)
 
-For info see ices-tools-prod/icesDatras#32
+and
 
-Then you should be able to use the functions from the folder ‘scripts’
+<https://github.com/einarhjorleifsson/obus>
+<https://github.com/ices-tools-prod/icesDatras/issues/32>
+
+After the installation of ‘obus’ you should be able to use the functions
+from the folder ‘scripts’.
 
 ``` r
 # Load some packages
@@ -76,7 +80,9 @@ hh.iii.dat<-read_sf("./test data/hh.iii.dat.shp")
 
 # Explore number of hauls and spatial extent
 ovrvw.hh.iii<-ovrvw.hh(hh.iii.dat)
+```
 
+``` r
 # Plot annual number of hauls per survey
 ovrvw.hh.iii$n.hauls %>% 
   as.data.frame %>%
@@ -88,14 +94,17 @@ ovrvw.hh.iii$n.hauls %>%
   labs(x="Year",y="Number of hauls")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ``` r
 # Plot spatial coverage of hauls per year
+```
+
+``` r
 ovrvw.hh.iii$spatial.overview
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-1-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 ``` r
 # Merge with abundance/occurrence data for cod
@@ -199,32 +208,21 @@ ovw.cod.iii$n.hauls
 ovw.cod.iii$occ.freq.plot
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
 ovw.cod.iii$spatial.overview
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-2-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 # Spatial plots
 boa.spatial(cod.iii.nat,"bi")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
-
-``` r
-# Assess cod in Region III across multiple periods
-cod.iii.per<-period.asmnt(boa.dat=cod.iii,
-                         rp=1985:2003,
-                         asp=list(2004:2009,2010:2015,2016:2021,2022:2025))
-```
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
     ##   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
 
-``` r
-cod.iii.per$summary.plot
-```
-
-![](README_files/figure-gfm/unnamed-chunk-3-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
