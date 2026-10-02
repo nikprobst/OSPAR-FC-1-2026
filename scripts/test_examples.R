@@ -33,7 +33,11 @@ hh.iii.dat<-datras.hh(ospar.region="III",
                       srvys=c("BTS","EVHOE","FR-WCGFS","IE-IAMS","IE-IGFS",
                         "NIGFS","SCOWCGFS","SP-PORC","SWC-IBTS"),
                       yrs=1985:2026)
-write_sf(hh.iii.dat,"./test data/hh.iii.dat.shp")
+hh.iii.dat[1:2,]
+hh.iii.dat$Year %>% table
+hh.iii.dat$Survey %>% table
+
+#write_sf(hh.iii.dat,"./test data/hh.iii.dat.shp")
 
 # Explore number of hauls and spatial extent
 ovrvw.hh.iii<-ovrvw.hh(hh.iii.dat)
@@ -49,7 +53,6 @@ ovrvw.hh.iii$n.hauls %>%
   labs(x="Year",y="Number of hauls")
 
 # Spatial extent
-x11(15,15)
 ovrvw.hh.iii$spatial.overview
 
 # Merge with abundance/occurrence data for cod

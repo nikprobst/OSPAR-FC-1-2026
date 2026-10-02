@@ -13,12 +13,15 @@ ovrvw.hh<-function(hh.dat) {
   # Overview on spatial coverage by year and survey
   spat.ovw.plt<-ggplot(data=hh.dat,aes(x=lon,y=lat,col=Survey))+
     geom_point(show.legend=T,size=0.5)+
-    facet_wrap(.~Year)+
+    facet_wrap(.~Year,ncol=srv.tbl %>% nrow %>% sqrt %>% multiply_by(1.6) %>% floor)+
     scale_colour_discrete(palette=pals::tol.rainbow(hh.dat$Survey %>% unique %>% length) %>% alpha(0.4),
                           name="Survey")+
     annotation_map(map_data("world"))+
     coord_quickmap()+
-    guides(color = guide_legend(override.aes=list(size=4)))
+    guides(color=guide_legend(override.aes=list(size=4)))+
+    labs(x="Longitude [°]",y="Latitude [°]")+
+    scale_x_continuous(n.breaks=3)+
+    scale_y_continuous(n.breaks=3)
   
   ovws<-list(srv.tbl,spat.ovw.plt)
   names(ovws)<-c("n.hauls","spatial.overview")
