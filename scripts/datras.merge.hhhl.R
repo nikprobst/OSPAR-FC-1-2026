@@ -10,12 +10,13 @@ datras.merge.hhhl<-function(hh.dat,spc){
   require(obus)
   require(mapplots)
   require(crayon)
+  require(magrittr)
   
   # Get species abundance by length 
   srvys<-hh.dat$Survey %>% unique %>% sort
   yrs<-hh.dat$Year %>% unique %>% sort
   
-  "Retrieve abundance data" %>% crayon::red() %>% cat 
+  "\nRetrieve abundance data" %>% crayon::red() %>% cat 
   hl<-obus::dr_con("HL", trim = FALSE) |> 
     # this bug needs to be fixed
     dplyr::mutate(Year = as.integer(Year)) |>  

@@ -11,6 +11,7 @@ datras.hh<-function(ospar.region,srvys,yrs){
   require(obus)
   require(mapplots)
   require(crayon)
+  require(magrittr)
   
   # Load EEZ & OSPAR data
   eezs.15<-read_sf("../spatial data/eezs.ospar.regions.shp")
@@ -19,6 +20,7 @@ datras.hh<-function(ospar.region,srvys,yrs){
   # Get haul information, e.g. lon, lat, tow duration, etc. from ICES DATRAS#
   # via Duck DB (very fast and by species)
   "Retrieve haul data" %>% crayon::red() %>% cat 
+  
   hh<-obus::dr_con("HH") |> 
     dplyr::mutate(Year = as.integer(Year)) |> 
     dplyr::filter(Survey %in% srvys,
@@ -50,7 +52,7 @@ datras.hh<-function(ospar.region,srvys,yrs){
   
   hh.sf.i<-st_intersection(hh.sf,sf.intersect.geom)
   
-  # Correct and give out final table
+  # Correct and give out final spatial data frame
   hh.sf.i<-hh.sf.i[,c(".id","Year","Quarter","Survey","Gear","Region","Country.1","StatisticalRectangle",
                       "HaulDuration","ShootLongitude","ShootLatitude")]
   names(hh.sf.i)[c(7,10,11)]<-c("Country","lon","lat")

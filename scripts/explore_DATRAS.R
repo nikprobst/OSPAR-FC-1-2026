@@ -31,6 +31,9 @@ hh.all.iii<-st_intersection(hh.all.sf,subset(ospar.regs,Region=="III"))
 hh.all.iv<-st_intersection(hh.all.sf,subset(ospar.regs,Region=="IV"))
 hh.all.v<-st_intersection(hh.all.sf,subset(ospar.regs,Region=="V"))
 
+# Remove full haul data
+rm(hh.all,hh.all.sf)
+
 # Explore number of hauls and spatial extent
 ovrvw.hh.iv<-ovrvw.hh(hh.all.iv)
 
@@ -81,6 +84,9 @@ hl.all.ii<-subset(hl.all,.id %in% hh.all.ii$.id)
 hl.all.iii<-subset(hl.all,.id %in% hh.all.iii$.id)
 hl.all.iv<-subset(hl.all,.id %in% hh.all.iv$.id)
 hl.all.v<-subset(hl.all,.id %in% hh.all.v$.id)
+
+# Remove full HL-data
+rm(hl.all)
 
 # Extract & sort species lists by region
 spcs.i<-data.table::rbindlist(wm_record_((hl.all.i$ValidAphiaID %>% unique %>% sort)))[,c("scientificname","order","class")] %>% 
