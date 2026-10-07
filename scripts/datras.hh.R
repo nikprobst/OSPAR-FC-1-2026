@@ -46,7 +46,7 @@ datras.hh<-function(ospar.region,srvys,yrs){
                                ices.rect(hh.sf$StatisticalRectangle)[,2],
                                hh.sf$ShootLatitude)  
   
-  # Crop by region and country
+  # Crop by OSPAR region
   "Intersect with spatial geometry" %>% crayon::yellow() %>% cat 
   sf.intersect.geom<-subset(eezs.15,Region %in% ospar.region) 
   

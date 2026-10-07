@@ -7,6 +7,7 @@ library(sf);library(raster);library(terra)
 library(ggplot2);library(patchwork);library(ggpubr);library(pals);library(crayon)
 library(worrms)     
 library(mapplots)
+library(DATRASextra)
 
 # remotes::install_github("einarhjorleifsson/obus@2a6c1f64ce0fda8c0167888488ae129b29e1e0f6")
 # Source of package 'obus' to extract DATRAS data
@@ -93,7 +94,7 @@ ovw.iii$occ.freq.plot
 ovw.iii$spatial.overview
 
 # Spatial plots
-boa.spatial(cod.iii.nat,"bi")
+boa.spatial(cod.iii.reg,"bi")
 boa.spatial(sqa.iii.nat,"ps")
 boa.spatial(tra.iii.reg,"both")
 
@@ -110,12 +111,10 @@ tra.iii.per<-period.asmnt(boa.dat=tra.iii,
                           asp=list(2004:2009,2010:2015,2016:2021,2022:2025))
 tra.iii.per$summary.plot
 
+# Read species lists
+spcs.iii<-read.csv("./lists/species_by_region/spcs.iii.csv")
+srvys.iii<-read.csv("./lists/surveys_by_region/srvys.iii.csv")
 
-
-
-
-
-
-
+getCatchWgt("BTS",1985:2026,quarters=1:4,127143)
 
 
