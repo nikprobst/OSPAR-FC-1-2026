@@ -1,5 +1,15 @@
 # Script to explore ICES DATRAS data
-# using 
+# using OBUS
+
+# Load functions
+require(obus)
+require(mapplots)
+require(crayon)
+require(magrittr)
+require(sf)
+require(tidyverse)
+require(xlsx)
+
 # ***** ----
 # Explore DATRAS data ----
 ## Spatial coverage of surveys ----
@@ -72,9 +82,12 @@ yrs.iv<-hh.all.iv$Year %>% unique %>% sort
 yrs.v<-hh.all.v$Year %>% unique %>% sort
 
 # Species per region ----
-"Retrieve species data" %>% crayon::red() %>% cat 
+## Species per region ----
+"\nRetrieve species data" %>% crayon::red() %>% cat 
 hl.all<-obus::dr_con("HL",trim=FALSE) |> 
   dplyr::mutate(Year = as.integer(Year)) |> 
+  #dplyr::filter(Survey %in% srvys,
+  #              Year %in% yrs) |>
   dplyr::collect() |>
   dplyr::glimpse() |> 
   as.data.frame()
@@ -85,39 +98,50 @@ hl.all.iii<-subset(hl.all,.id %in% hh.all.iii$.id)
 hl.all.iv<-subset(hl.all,.id %in% hh.all.iv$.id)
 hl.all.v<-subset(hl.all,.id %in% hh.all.v$.id)
 
-# Remove full HL-data
-rm(hl.all)
+#spcs.i<-(hl.all.i$latin %>% unique)[hl.all.i$latin %>% unique %>% strsplit(" ") %>% lapply(function(x) length(x)) %>% is_greater_than(1) %>% which]
+#spcs.ii<-(hl.all.ii$latin %>% unique)[hl.all.ii$latin %>% unique %>% strsplit(" ") %>% lapply(function(x) length(x)) %>% is_greater_than(1) %>% which]
+#spcs.iii<(hl.all.iii$latin %>% unique)[hl.all.iii$latin %>% unique %>% strsplit(" ") %>% lapply(function(x) length(x)) %>% is_greater_than(1) %>% which]
+#spcs.iv<-(hl.all.iv$latin %>% unique)[hl.all.iv$latin %>% unique %>% strsplit(" ") %>% lapply(function(x) length(x)) %>% is_greater_than(1) %>% which]
+#spcs.v<-(hl.all.v$latin %>% unique)[hl.all.v$latin %>% unique %>% strsplit(" ") %>% lapply(function(x) length(x)) %>% is_greater_than(1) %>% which]
 
 # Extract & sort species lists by region
-spcs.i<-data.table::rbindlist(wm_record_((hl.all.i$ValidAphiaID %>% unique %>% sort)))[,c("scientificname","order","class")] %>% 
-  data.frame
-spcs.i<-spcs.i[strsplit(spcs.i$scientificname," ") %>% lapply(length) %>% is_greater_than(1) %>% which,] %>%
-  subset(class %in% c("Teleostei","Elasmobranchii","Cephalopoda"))
-spcs.i<-spcs.i[spcs.i$scientificname %>% order,]
+hl.dats<-c("hl.all.i","hl.all.ii","hl.all.iii","hl.all.iv","hl.all.v")
+ors<-c("i","ii","iii","iv","v")
+spcs.dats<-c("spcs.i","spcs.ii","spcs.iii","spcs.iv","spcs.v")
 
-spcs.ii<-data.table::rbindlist(wm_record_((hl.all.ii$ValidAphiaID %>% unique %>% sort)))[,c("scientificname","order","class")] %>% 
-  data.frame
-spcs.ii<-spcs.ii[strsplit(spcs.ii$scientificname," ") %>% lapply(length) %>% is_greater_than(1) %>% which,] %>%
-  subset(class %in% c("Teleostei","Elasmobranchii","Cephalopoda"))
-spcs.ii<-spcs.ii[spcs.ii$scientificname %>% order,]
-
-spcs.iii<-data.table::rbindlist(wm_record_((hl.all.iii$ValidAphiaID %>% unique %>% sort)))[,c("scientificname","order","class")] %>% 
-  data.frame
-spcs.iii<-spcs.iii[strsplit(spcs.iii$scientificname," ") %>% lapply(length) %>% is_greater_than(1) %>% which,] %>%
-  subset(class %in% c("Teleostei","Elasmobranchii","Cephalopoda"))
-spcs.iii<-spcs.iii[spcs.iii$scientificname %>% order,]
-
-spcs.iv<-data.table::rbindlist(wm_record_((hl.all.iv$ValidAphiaID %>% unique %>% sort)))[,c("scientificname","order","class")] %>% 
-  data.frame
-spcs.iv<-spcs.iv[strsplit(spcs.iv$scientificname," ") %>% lapply(length) %>% is_greater_than(1) %>% which,] %>%
-  subset(class %in% c("Teleostei","Elasmobranchii","Cephalopoda"))
-spcs.iv<-spcs.iv[spcs.iv$scientificname %>% order,]
-
-spcs.v<-data.table::rbindlist(wm_record_((hl.all.v$ValidAphiaID %>% unique %>% sort)))[,c("scientificname","order","class")] %>% 
-  data.frame
-spcs.v<-spcs.v[strsplit(spcs.v$scientificname," ") %>% lapply(length) %>% is_greater_than(1) %>% which,] %>%
-  subset(class %in% c("Teleostei","Elasmobranchii","Cephalopoda"))
-spcs.v<-spcs.v[spcs.v$scientificname %>% order,]
+# Loop through regions
+pb<-txtProgressBar(min=1,max=length(hl.dats),style=3)
+for (i in 0:length(hl.dats)){
+  
+  # Get species data for region
+  hl.dat<-get(hl.dats[i])
+  
+  # Get species, classes and orders
+  spcs.dat<-data.table::rbindlist(wm_record_((hl.dat$ValidAphiaID %>% unique %>% sort)))[,c("scientificname","order","class")] %>% 
+    data.frame
+  
+  # Get frequencies within hauls and across hauls
+  hl.freq<-hl.dat %>% group_by(latin,.id) %>% reframe(freq=length(latin)) 
+  spcs.freq<-hl.freq %>% group_by(latin) %>% reframe(freq=length(latin))
+  
+  # Subset sharks, rays, teleosts & elasmos and merge with freuwqncies
+  spcs.dat<-spcs.dat[strsplit(spcs.dat$scientificname," ") %>% lapply(length) %>% is_greater_than(1) %>% which,] %>%
+    subset(class %in% c("Teleostei","Elasmobranchii","Cephalopoda","Myxini","Petromyzonti")) %>% 
+    merge(spcs.freq,by.x="scientificname",by.y="latin")
+  
+  # Add OSPAR region
+  spcs.dat$opsar.region<-ors[i]
+  
+  # Sort by species name
+  spcs.dat<-spcs.dat[spcs.dat$scientificname %>% order,]
+  
+  # Save data
+  write.csv(spcs.dat,
+            paste0("D:/MSRL/OSPAR/2026 FC1/OSPAR_FC_1_2026_GitHub/lists/species_by_region/spcs.",ors[i],".csv"),
+            row.names=F)
+  
+  setTxtProgressBar(pb,i)
+}
 
 # Save lists ----
 # survey lists
@@ -140,3 +164,27 @@ write.csv(spcs.ii,"./lists/species_by_region/spcs.ii.csv",row.names=F)
 write.csv(spcs.iii,"./lists/species_by_region/spcs.iii.csv",row.names=F)
 write.csv(spcs.iv,"./lists/species_by_region/spcs.iv.csv",row.names=F)
 write.csv(spcs.v,"./lists/species_by_region/spcs.v.csv",row.names=F)
+
+# Check surveys-request by Isla - 07.10.2026  -----
+hh.dats<-c("hh.all.i","hh.all.ii","hh.all.iii","hh.all.iv","hh.all.v")
+
+for (i in 1:length(hh.dats)){
+  srv.inf<-get(hh.dats[i]) %>%
+           group_by(Survey,Quarter) %>%
+           reframe(start.year=min(Year),
+                   end.year=max(Year),
+                   main.gear=Gear %>% table %>% which.max %>% names,
+                   n.gear.types=Gear %>% unique %>% length,
+                   min.trawl.dur=min(HaulDuration,na.rm=T),
+                   max.trawl.dur=max(HaulDuration,na.rm=T),
+                   n.hauls.total=length(.id),
+                   mean.hauls.per.year=(length(.id)/(max(Year)-min(Year)+1)) %>% round(1)) %>%
+    as.data.frame()
+  
+  if(i==1) srvs.inf<-srv.inf else srvs.inf<-rbind(srvs.inf,srv.inf)
+}
+
+write.xlsx(srvs.inf,"../OBUS_survey_overview.xlsx",row.names=F)
+
+
+
